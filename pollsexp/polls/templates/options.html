@@ -1,0 +1,20 @@
+<html>
+<head>
+  <title>Poll app</title>
+</head>
+<body>
+  <h1>Options - {{ question.question }}</h1>
+  <form action="/polls/{{ question.id }}/vote" method="post">
+    {% csrf_token %}
+
+  <ul id="options">
+      {% for choice in choice_list %}
+        <li>
+          <input type="radio" name="choice_id" value="{{ choice.id }}" /> {{ choice.text }}
+        </li>
+      {% endfor %}
+  </ul>
+  <input type="submit" id="submit" value="Submit" />
+</form>
+</body>
+</html>

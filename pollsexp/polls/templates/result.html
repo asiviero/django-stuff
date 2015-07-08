@@ -1,0 +1,24 @@
+<html>
+<head>
+  <title>Poll app</title>
+</head>
+<body>
+  <h1>Poll app</h1>
+  <table id="question_results">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for choice in choice_list %}
+        <tr>
+          <td>{{ choice.text }}</td>
+          <td>{{ choice.vote_count }}</td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>

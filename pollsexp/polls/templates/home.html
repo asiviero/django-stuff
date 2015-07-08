@@ -1,0 +1,26 @@
+<html>
+<head>
+  <title>Poll app</title>
+</head>
+<body>
+  <h1>Poll app</h1>
+  <table id="list_questions">
+    <thead>
+      <tr>
+        <th>Option</th>
+        <th></th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for question in question_list %}
+        <tr>
+          <td>{{ forloop.counter }}</td>
+          <td>{{ question.question }}</td>
+          <td><a href="{{ question.id }}/options/">VOTE</a></td>
+          <td><a href="{{ question.id }}/">RESULTS</a></td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</body>
+</html>
