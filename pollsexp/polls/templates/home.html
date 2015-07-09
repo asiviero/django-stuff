@@ -16,8 +16,8 @@
         <tr>
           <td>{{ forloop.counter }}</td>
           <td>{{ question.question }}</td>
-          <td><a href="{{ question.id }}/options/">VOTE</a></td>
-          <td><a href="{{ question.id }}/">RESULTS</a></td>
+          <td><a href="{% url "Options" question.id %}">VOTE</a></td>
+          <td><a href="{% url "Result" question.id %}">RESULTS</a></td>
         </tr>
       {% endfor %}
     </tbody>

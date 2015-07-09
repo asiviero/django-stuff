@@ -4,7 +4,7 @@
 </head>
 <body>
   <h1>Options - {{ question.question }}</h1>
-  <form action="/polls/{{ question.id }}/vote" method="post">
+  <form action="{% url "Vote" question.id %}" method="post">
     {% csrf_token %}
 
   <ul id="options">
