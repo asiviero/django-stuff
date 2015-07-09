@@ -1,5 +1,6 @@
 from django.shortcuts import render, redirect
 from polls.models import Question, Choice
+from django.core.urlresolvers import reverse
 
 # Create your views here.
 def home(request):
@@ -17,4 +18,4 @@ def options(request,question_id):
 def vote(request, question_id):
     choice = Choice.objects.get(id=request.POST["choice_id"])
     choice.vote()
-    return redirect('/polls/%s/' % (question_id))
+    return redirect(reverse("Result", args=(question_id,)))
