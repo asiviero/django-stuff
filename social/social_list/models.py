@@ -21,7 +21,7 @@ class Player(models.Model):
         return self.friend_list.all()
 
     def accept_request_from_friend(self,friend):
-        FriendshipRequest.objects.get(user_from=friend).accept()
+        FriendshipRequest.objects.get(user_from=friend,user_to=self).accept()
 
 class Friendship(models.Model):
     user_from = models.ForeignKey(Player)
@@ -45,3 +45,6 @@ class FriendshipRequest(models.Model):
         )
         self.accepted = True
         self.save()
+
+#class Group(models.Model):
+#    name =
