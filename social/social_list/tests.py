@@ -61,3 +61,17 @@ class FriendshipTest(TestCase):
         list_user2_friends = user_2.get_friend()
         self.assertEqual(len(list_user1_friends),1)
         self.assertEqual(list_user2_friends[0].user.first_name,user_1.user.first_name)
+
+    def test_user_can_only_accept_friend_requests_to_himself(self):
+        user_1 = PlayerFactory()
+        user_2 = PlayerFactory()
+        user_3 = PlayerFactory()
+
+        user_1.add_user(user_2)
+        user_3.accept_request_from_friend(user_1)
+        user_3.accept_request_from_friend(user_2)
+
+        # Check if no FriendshipRequest is accepted
+        friendship_request_list = FriendshipRequest.objects.all()
+        friendship_request = friendship_request_list[0]
+        self.assertEqual(friendship_request.accepted,False)

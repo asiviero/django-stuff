@@ -21,7 +21,10 @@ class Player(models.Model):
         return self.friend_list.all()
 
     def accept_request_from_friend(self,friend):
-        FriendshipRequest.objects.get(user_from=friend,user_to=self).accept()
+        try:
+            FriendshipRequest.objects.get(user_from=friend,user_to=self).accept()
+        except FriendshipRequest.DoesNotExist:
+            pass
 
 class Friendship(models.Model):
     user_from = models.ForeignKey(Player)
