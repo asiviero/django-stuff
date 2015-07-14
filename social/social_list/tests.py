@@ -1,6 +1,6 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from social_list.models import Player
+from social_list.models import Player, Friendship, FriendshipRequest
 import factory
 import faker
 
@@ -30,6 +30,27 @@ class FriendshipTest(TestCase):
 
         # Call add function
         user_1.add_user(user_2)
+
+        # Check if a FriendshipRequest was created
+        friendship_request_list = FriendshipRequest.objects.all()
+        self.assertEqual(len(friendship_request_list),1)
+
+        # Check no Friendship were created
+        friendship_list = Friendship.objects.all()
+        self.assertEqual(len(friendship_list),0)
+
+        # Check if users are correct
+        friendship_request = friendship_request_list[0]
+        self.assertEqual(friendship_request.user_from.user.first_name,user_1.user.first_name)
+        self.assertEqual(friendship_request.user_to.user.first_name,user_2.user.first_name)
+
+        # User 2 accepts the request from User 1
+        user_2.accept_request_from_friend(user_1)
+
+        # Check if FriendshipRequest is accepted
+        friendship_request_list = FriendshipRequest.objects.all()
+        friendship_request = friendship_request_list[0]
+        self.assertEqual(friendship_request.accepted,True)
 
         # Check if both users have 1 friend each
         list_user1_friends = user_1.get_friend()
