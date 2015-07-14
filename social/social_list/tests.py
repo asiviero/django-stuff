@@ -1,10 +1,15 @@
 from django.test import TestCase
 from django.contrib.auth.models import User
-from social_list.models import Player, Friendship, FriendshipRequest
+from social_list.models import Player, Friendship, FriendshipRequest, Group, Membership
 import factory
 import faker
 
 faker = faker.Factory.create()
+
+class GroupFactory(factory.DjangoModelFactory):
+    class Meta:
+        model = Group
+    name = "A new group"
 
 class UserFactory(factory.DjangoModelFactory):
     class Meta:
@@ -75,3 +80,19 @@ class FriendshipTest(TestCase):
         friendship_request_list = FriendshipRequest.objects.all()
         friendship_request = friendship_request_list[0]
         self.assertEqual(friendship_request.accepted,False)
+        
+
+class GroupTest(TestCase):
+
+    def test_user_can_join_group(self):
+        user_1 = PlayerFactory()
+        group_1 = GroupFactory()
+
+        user_1.join_group(group_1)
+
+        # Check if a Membership was created
+        membership_list = Membership.objects.all()
+        self.assertEqual(len(membership_list),1)
+
+        # Check if Group member_list was updated
+        self.assertEqual(len(group_1.member_list.all()),1)

@@ -26,6 +26,12 @@ class Player(models.Model):
         except FriendshipRequest.DoesNotExist:
             pass
 
+    def join_group(self,group):
+        Membership.objects.create(
+            member = self,
+            group = group
+        )
+
 class Friendship(models.Model):
     user_from = models.ForeignKey(Player)
     user_to = models.ForeignKey(Player,related_name="friend")
@@ -49,5 +55,10 @@ class FriendshipRequest(models.Model):
         self.accepted = True
         self.save()
 
-#class Group(models.Model):
-#    name =
+class Group(models.Model):
+    name = models.CharField(max_length = 255)
+    member_list = models.ManyToManyField(Player,through='Membership')
+
+class Membership(models.Model):
+    member = models.ForeignKey(Player)
+    group = models.ForeignKey(Group)
