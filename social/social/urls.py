@@ -9,5 +9,6 @@ urlpatterns = [
 
     url(r'^admin/', include(admin.site.urls)),
     url(r'^accounts/', include('django.contrib.auth.urls')),
-    url(r'^$', views.home)
+    url(r'^$', views.home, name="home"),
+    url(r'^login/$', views.login_and_register)
 ]
