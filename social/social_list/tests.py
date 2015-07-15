@@ -1,8 +1,9 @@
-from django.test import TestCase
+from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from social_list.models import Player, Friendship, FriendshipRequest, Group, Membership
 import factory
 import faker
+from django.conf import settings
 
 faker = faker.Factory.create()
 
@@ -80,7 +81,7 @@ class FriendshipTest(TestCase):
         friendship_request_list = FriendshipRequest.objects.all()
         friendship_request = friendship_request_list[0]
         self.assertEqual(friendship_request.accepted,False)
-        
+
 
 class GroupTest(TestCase):
 
@@ -96,3 +97,11 @@ class GroupTest(TestCase):
 
         # Check if Group member_list was updated
         self.assertEqual(len(group_1.member_list.all()),1)
+
+class RegistrationTest(TestCase):
+
+    def test_user_gets_redirected_on_home(self):
+        c = Client()
+        response = c.get("/")
+        self.assertEqual(response.status_code,302)
+        self.assertRedirects(response,settings.LOGIN_URL + "?next=/")
