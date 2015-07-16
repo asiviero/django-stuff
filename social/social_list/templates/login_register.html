@@ -1,6 +1,6 @@
 {% extends "base.html" %}
   {% block main_content_block %}
-    <form method="post" action="">
+    <form id="form_login" method="post" action="">
       {% csrf_token %}
       {{ login_form }}
       <input type="submit" value="submit" />
@@ -8,8 +8,9 @@
       <input type="hidden" name="form" value="login_form" />
     </form>
 
-    <form method="post" action="">
+    <form id="form_registration" method="post" action="">
       {% csrf_token %}
+      {{ player_form }}
       {{ user_creation_form }}
       <input type="submit" value="submit" />
       <input type="hidden" name="next" value="{{ next }}" />

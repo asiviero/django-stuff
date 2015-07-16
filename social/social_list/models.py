@@ -1,8 +1,11 @@
 from django.db import models
 from django.contrib.auth.models import User
+from django.contrib.auth.forms import UserCreationForm
+from django.forms import ModelForm
 
 class Player(models.Model):
     user = models.OneToOneField(User)
+    nickname = models.CharField(max_length=255, default="")
     friend_list = models.ManyToManyField('self',through='Friendship',
                                                                         through_fields=('user_from','user_to'),
                                                                         symmetrical=False)
@@ -31,6 +34,26 @@ class Player(models.Model):
             member = self,
             group = group
         )
+
+class PlayerForm(ModelForm):
+    class Meta:
+        model = Player
+        fields = ['nickname']
+
+class UserForm(UserCreationForm):
+    class Meta:
+        model = User
+        fields = ['username','first_name','last_name','email','password1','password2']
+
+    def save(self, commit=True):
+        user = super(UserForm, self).save(commit=False)
+        user.user_name = self.cleaned_data["first_name"]
+        user.first_name = self.cleaned_data["first_name"]
+        user.last_name = self.cleaned_data["last_name"]
+        user.email = self.cleaned_data["email"]
+        if commit:
+            user.save()
+        return user
 
 class Friendship(models.Model):
     user_from = models.ForeignKey(Player)
