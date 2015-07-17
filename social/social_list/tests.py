@@ -89,17 +89,40 @@ class SearchTest(TestCase):
     def test_user_can_search_for_users(self):
         user_1 = PlayerFactory()
         user_2 = PlayerFactory()
+        user_2.nickname = "USER_NICKNAME"
+        user_2.save()
         user_3 = PlayerFactory()
+        user_3.nickname = "ANOTHER"
+        user_3.save()
 
         c = Client()
         params = urllib.parse.urlencode({
-            "type":"User",
+            "qtype":"User",
             "name":user_2.user.first_name
         })
         response = c.get("/search/?%s" % params)
 
         self.assertContains(response,user_2.user.first_name)
         self.assertNotContains(response,user_3.user.first_name)
+
+        params = urllib.parse.urlencode({
+            "qtype":"User",
+            "name":user_2.user.last_name
+        })
+        response = c.get("/search/?%s" % params)
+
+        self.assertContains(response,user_2.user.last_name)
+        self.assertNotContains(response,user_3.user.last_name)
+
+        params = urllib.parse.urlencode({
+            "qtype":"User",
+            "name":user_2.nickname
+        })
+        response = c.get("/search/?%s" % params)
+
+        self.assertContains(response,user_2.nickname)
+        self.assertNotContains(response,user_3.nickname)
+
 
     def test_user_can_search_group(self):
         group_1 = GroupFactory()
@@ -109,7 +132,7 @@ class SearchTest(TestCase):
 
         c = Client()
         params = urllib.parse.urlencode({
-            "type":"Group",
+            "qtype":"Group",
             "name":group_1.name
         })
         response = c.get("/search/?%s" % params)

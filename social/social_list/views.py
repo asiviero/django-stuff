@@ -5,12 +5,16 @@ from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
 from social_list.models import Player, PlayerForm, UserForm, Group
+from social_list.forms import SearchForm
 from django.db.models import Q
+import urllib
 
 # Create your views here.
 @login_required
 def home(request):
-    return render(request, "home.html")
+    return render(request, "home.html", {
+        "search_form" : SearchForm
+    })
 
 def login_and_register(request):
 
@@ -51,16 +55,18 @@ def login_and_register(request):
 
 def search(request):
     results = []
-    if request.GET.get("type") == "User" or request.GET.get("type") == "":
+    if request.GET.get("qtype") == "User" or request.GET.get("qtype") == "":
         results = User.objects.filter(
             Q(first_name__icontains=request.GET.get("name")) |
-            Q(last_name__icontains=request.GET.get("name"))
+            Q(last_name__icontains=request.GET.get("name")) |
+            Q(player__nickname__icontains=request.GET.get("name"))
         )
-    elif request.GET.get("type") == "Group":
+    elif request.GET.get("qtype") == "Group":
         results = Group.objects.filter(
             Q(name__icontains=request.GET.get("name"))
         )
     return render(request, "search_results.html", {
-        "model" : request.GET.get("type"),
+        "model" : request.GET.get("qtype"),
+        "name_query" : urllib.parse.urlencode({"name":request.GET.get("name")}),
         "results" : results
     })
