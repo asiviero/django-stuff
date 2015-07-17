@@ -12,6 +12,20 @@ an index so it's easy to find them.
 # The tutorials
 
 1. `poll` - This is Django's [first tutorial](https://docs.djangoproject.com/en/1.8/intro/tutorial03/), which aims to create a polling website with an admin interface so the admin can enter new polls. Still haven't done the last parts that deal with optimization but rough main functionality there and covered by tests.
+1. `social` - Although I'm not exactly following any tutorial for this one, my aim is to create a micro social network in which users will be able to add themselves and join groups and eventually grow that to a gaming network, starting with single player games and at last multiplayer with websockets.
+
+  - [x] Users creation, friend request and group joining
+  - [ ] Some front-end and UI creation
+  - [ ] Annotators to prevent weird situations
+  - [ ] Layouting a little bit
+  - [ ] Code a singleplayer game (Word search maybe?)
+  - [ ] Stats tracking for games
+  - [ ] Simple chat system running on websockets
+  - [ ] More complex messages via websockets
+  - [ ] Simple multiplayer game (tic-tac-toe would be a good fit)
+  - [ ] Intermediate multiplayer game (checkers would be fine, I guess)
+  - [ ] Some board game emulation (e.g. Risk/War)
+  - [ ] Who knows?
 
 # Running the tests
 
