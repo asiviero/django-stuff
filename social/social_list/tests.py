@@ -2,6 +2,7 @@ from django.test import TestCase, Client
 from django.contrib.auth.models import User
 from social_list.models import Player, Friendship, FriendshipRequest, Group, Membership
 from social_list.factories import *
+import urllib
 
 # Create your tests here.
 class FriendshipTest(TestCase):
@@ -82,3 +83,36 @@ class RegistrationTest(TestCase):
         response = c.get("/")
         self.assertEqual(response.status_code,302)
         self.assertRedirects(response,settings.LOGIN_URL + "?next=/")
+
+class SearchTest(TestCase):
+
+    def test_user_can_search_for_users(self):
+        user_1 = PlayerFactory()
+        user_2 = PlayerFactory()
+        user_3 = PlayerFactory()
+
+        c = Client()
+        params = urllib.parse.urlencode({
+            "type":"User",
+            "name":user_2.user.first_name
+        })
+        response = c.get("/search/?%s" % params)
+
+        self.assertContains(response,user_2.user.first_name)
+        self.assertNotContains(response,user_3.user.first_name)
+
+    def test_user_can_search_group(self):
+        group_1 = GroupFactory()
+        group_2 = GroupFactory()
+        group_2.name = "ANOTHER"
+        group_2.save()
+
+        c = Client()
+        params = urllib.parse.urlencode({
+            "type":"Group",
+            "name":group_1.name
+        })
+        response = c.get("/search/?%s" % params)
+
+        self.assertContains(response,group_1.name)
+        self.assertNotContains(response,group_2.name)

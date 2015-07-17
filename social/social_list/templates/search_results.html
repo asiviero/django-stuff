@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+{% block main_content_block %}
+  {% for result in results %}
+    {% if model == "User" %}
+      {{ result.first_name }} {{ result.last_name }}
+    {% endif %}
+    {% if model == "Group" %}
+      {{ result.name }}
+    {% endif %}
+  {% endfor %}
+{% endblock %}

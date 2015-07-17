@@ -4,7 +4,8 @@ from django.contrib.auth.forms import AuthenticationForm, UserCreationForm
 from django.contrib.auth import authenticate, login
 from django.contrib.auth.models import User
 from django.forms.models import inlineformset_factory
-from social_list.models import Player, PlayerForm, UserForm
+from social_list.models import Player, PlayerForm, UserForm, Group
+from django.db.models import Q
 
 # Create your views here.
 @login_required
@@ -46,4 +47,20 @@ def login_and_register(request):
         "user_creation_form" : UserForm,
         "player_form" : PlayerForm,
         "next" : request.GET.get("next")
+    })
+
+def search(request):
+    results = []
+    if request.GET.get("type") == "User" or request.GET.get("type") == "":
+        results = User.objects.filter(
+            Q(first_name__icontains=request.GET.get("name")) |
+            Q(last_name__icontains=request.GET.get("name"))
+        )
+    elif request.GET.get("type") == "Group":
+        results = Group.objects.filter(
+            Q(name__icontains=request.GET.get("name"))
+        )
+    return render(request, "search_results.html", {
+        "model" : request.GET.get("type"),
+        "results" : results
     })
