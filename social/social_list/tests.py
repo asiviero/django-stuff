@@ -1,6 +1,6 @@
 from django.test import TestCase, Client
 from django.contrib.auth.models import User
-from social_list.models import Player, Friendship, FriendshipRequest, Group, Membership
+from social_list.models import *
 from social_list.factories import *
 import urllib
 
@@ -60,12 +60,41 @@ class FriendshipTest(TestCase):
         friendship_request = friendship_request_list[0]
         self.assertEqual(friendship_request.accepted,False)
 
+    def test_user_can_add_user_once(self):
+        # Create two users
+        user_1 = PlayerFactory()
+        user_2 = PlayerFactory()
+
+        # Call add function
+        user_1.add_user(user_2)
+
+        # Check if a FriendshipRequest was created
+        friendship_request_list = FriendshipRequest.objects.all()
+        self.assertEqual(len(friendship_request_list),1)
+
+        # Call add function again
+        user_1.add_user(user_2)
+
+        # Check if a new FriendshipRequest was not created
+        friendship_request_list = FriendshipRequest.objects.all()
+        self.assertEqual(len(friendship_request_list),1)
+
+        # User 2 accepts the request from User 1
+        user_2.accept_request_from_friend(user_1)
+
+        # Call add function again
+        user_1.add_user(user_2)
+
+        # Check if a new FriendshipRequest was not created
+        friendship_request_list = FriendshipRequest.objects.all()
+        self.assertEqual(len(friendship_request_list),1)
+
 
 class GroupTest(TestCase):
 
-    def test_user_can_join_group(self):
+    def test_user_can_join_public_group(self):
         user_1 = PlayerFactory()
-        group_1 = GroupFactory()
+        group_1 = GroupFactory(public=True)
 
         user_1.join_group(group_1)
 
@@ -75,6 +104,38 @@ class GroupTest(TestCase):
 
         # Check if Group member_list was updated
         self.assertEqual(len(group_1.member_list.all()),1)
+
+    def test_user_can_join_private_group(self):
+        user_1 = PlayerFactory()
+        user_2 = PlayerFactory()
+        #group_1 = GroupFactory(public=False)
+        group_1 = user_2.create_group("Group 1", public=False)
+
+        # Check if a Membership was created
+        membership_list = Membership.objects.all()
+        self.assertEqual(len(membership_list),1)
+
+        membership = membership_list.get(member__pk=user_2.id)
+        self.assertEqual(membership.role,Membership.GROUP_ADMIN)
+
+        user_1.join_group(group_1)
+
+        # Check if a MembershipRequest was created
+        membership_request_list = MembershipRequest.objects.all()
+        self.assertEqual(len(membership_request_list),1)
+
+        # Check if a Membership was not created
+        membership_list = Membership.objects.all()
+        self.assertEqual(len(membership_list),1)
+
+        user_2.accept_request_group(group=group_1,user=user_1)
+
+        # Check if a membership was created
+        membership_list = Membership.objects.all()
+        self.assertEqual(len(membership_list),2)
+
+        # Check if Group member_list was updated
+        self.assertEqual(len(group_1.member_list.all()),2)
 
 class RegistrationTest(TestCase):
 

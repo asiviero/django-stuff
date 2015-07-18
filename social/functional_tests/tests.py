@@ -160,3 +160,6 @@ class SearchTest(LiveServerTestCase):
 
         self.assertRegexpMatches(redirected_url, "search/*")
         self.assertIn(self.group_1.name,self.browser.find_element_by_class_name("main-content").text)
+
+class UserAddTest(self):
+    pass
