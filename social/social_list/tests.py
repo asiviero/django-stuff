@@ -92,6 +92,7 @@ class FriendshipTest(TestCase):
 
 class GroupTest(TestCase):
 
+
     def test_user_can_join_public_group(self):
         user_1 = PlayerFactory()
         group_1 = GroupFactory(public=True)
@@ -136,6 +137,21 @@ class GroupTest(TestCase):
 
         # Check if Group member_list was updated
         self.assertEqual(len(group_1.member_list.all()),2)
+
+    def test_user_cant_accept_if_not_admin(self):
+        user_1 = PlayerFactory()
+        user_2 = PlayerFactory()
+        #group_1 = GroupFactory(public=False)
+        group_1 = user_2.create_group("Group 1", public=False)
+        user_1.accept_request_group(group=group_1,user=user_1)
+
+        # Check if a membership was not created
+        membership_list = Membership.objects.all()
+        self.assertEqual(len(membership_list),1)
+
+        # Check if Group member_list was not updated
+        self.assertEqual(len(group_1.member_list.all()),1)
+
 
 class RegistrationTest(TestCase):
 
